@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вход и погода</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div id="login-form">
+        <h2>Вход</h2>
+        <div class="form-group">
+            <label>Email:</label>
+            <input type="email" id="email" placeholder="eve.holt@reqres.in" value="eve.holt@reqres.in" required>
+        </div>
+        <div class="form-group">
+            <label>Пароль:</label>
+            <input type="password" id="password" placeholder="cityslicka" value="cityslicka">
+        </div>
+        <button onclick="login()">Войти</button>
+        <p id="error" style="color: red;"></p>
+    </div>
+
+    <div id="weather" class="weather">
+        <h2>Погода в Москве</h2>
+        <p>Температура: <span id="temp"></span>°C</p>
+        <p>Погода: <span id="conditions"></span></p>
+        <p>Ветер: <span id="wind"></span> м/с</p>
+        <button onclick="logout()">Выйти</button>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+
+</html>
