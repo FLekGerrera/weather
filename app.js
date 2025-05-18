@@ -17,43 +17,39 @@ async function login() {
     const password = document.getElementById("password").value;
     const errorElement = document.getElementById("error");
 
+    // Проверка заполнения полей
     if (!email || !password) {
         errorElement.textContent = "Заполните email и пароль";
         return;
     }
 
     try {
-        console.log("Отправка запроса на авторизацию..."); // Логирование
-        const response = await fetch("https://reqres.in/api/login", {
+        const response = await fetch(API_AUTH, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
+                "x-api-key": "reqres-free-v1"
             },
             body: JSON.stringify({
-                email: "eve.holt@reqres.in",
-                password: "cityslicka"
+                email: "eve.holt@reqres.in",  // Фиксированный тестовый email
+                password: "cityslicka"         // Фиксированный тестовый пароль
             }),
         });
 
-        console.log("Ответ сервера:", response); // Логирование
-        
+        const data = await response.json();
+
         if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.error || "Ошибка сервера");
+            throw new Error(data.error || "Ошибка сервера");
         }
 
-        const data = await response.json();
         localStorage.setItem("token", data.token);
-        
-        console.log("Авторизация успешна, токен:", data.token); // Логирование
-        
         document.getElementById("login-form").style.display = "none";
         document.getElementById("weather").style.display = "block";
         fetchWeather();
 
     } catch (error) {
-        console.error("Ошибка авторизации:", error);
         errorElement.textContent = "Ошибка: " + error.message;
+        console.error("Детали ошибки:", error);
     }
 }
 
@@ -67,24 +63,21 @@ function logout() {
 // Получение погоды
 async function fetchWeather() {
     try {
-        console.log("Запрос погоды..."); // Логирование
-        const API_WEATHER = "https://api.openweathermap.org/data/2.5/weather?q=Moscow&units=metric&appid=73f1d39815e5449d42d6eaf6ad2a1431&lang=ru";
-        
         const response = await fetch(API_WEATHER);
         const data = await response.json();
         
-        console.log("Ответ OpenWeatherMap:", data); // Логирование
-        
         if (data.cod === 401) {
-            throw new Error("Неверный API-ключ");
+            throw new Error("Неверный API-ключ. Проверь ключ на OpenWeatherMap.");
+        }
+        if (!response.ok) {
+            throw new Error(data.message || "Ошибка загрузки погоды");
         }
         
         document.getElementById("temp").textContent = Math.round(data.main.temp);
         document.getElementById("conditions").textContent = data.weather[0].description;
         document.getElementById("wind").textContent = data.wind.speed;
-        
     } catch (error) {
-        console.error("Ошибка запроса погоды:", error);
-        document.getElementById("conditions").textContent = "Ошибка: " + error.message;
+        console.error("Ошибка:", error);
+        document.getElementById("conditions").textContent = error.message;
     }
 }
